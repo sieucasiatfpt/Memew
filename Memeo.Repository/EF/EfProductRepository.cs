@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Memeo.Repository.EF
 {
-    public class EfProductRepository(AppDbContext db) : IProductRepository
+    public class EfProductRepository(MemewDbContext db) : IProductRepository
     {
         public Task<List<Product>> GetAllAsync(CancellationToken ct = default)
         => db.Products.Include(p => p.Sizes).ToListAsync(ct);

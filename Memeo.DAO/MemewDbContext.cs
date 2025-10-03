@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Memeo.DAO
 {
-    public class AppDbContext : DbContext
+    public class MemewDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+        public MemewDbContext(DbContextOptions<MemewDbContext> options) : base(options) { }
 
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductSize> ProductSizes { get; set; }
