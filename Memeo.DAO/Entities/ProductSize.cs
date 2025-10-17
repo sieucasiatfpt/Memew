@@ -8,8 +8,8 @@ namespace Memeo.DAO.Entities
 {
     public class ProductSize
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public Guid ProductId { get; set; }
+        public Guid ProductSizesID { get; set; } = Guid.NewGuid();
+        public Guid ProductID { get; set; }
         public string ProductSizeName { get; set; } = default!;
         public string? Colors { get; set; }
         public decimal UnitPrice { get; set; }

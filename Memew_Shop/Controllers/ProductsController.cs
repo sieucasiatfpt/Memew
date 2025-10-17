@@ -1,6 +1,7 @@
 ﻿using Memeo.Repository.Abstractions;
 using Memew.BO.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json.Serialization;
 
 namespace Memew_Shop.Controllers;
 
@@ -8,25 +9,40 @@ namespace Memew_Shop.Controllers;
 [Route("api/[controller]")]
 public class ProductsController(IProductService service) : ControllerBase
 {
-    [HttpGet] public Task<List<ProductDTO>> GetAll() => service.GetAllAsync();
+    [HttpGet("getAll")] 
+    public Task<List<ProductDTO>> GetAll() => service.GetAllAsync();
 
-    [HttpGet("{id:guid}")]
-    public async Task<ActionResult<ProductDTO>> Get(Guid id)
-        => (await service.GetAsync(id)) is { } dto ? dto : NotFound();
+    [HttpGet("getById")]
+    public async Task<ActionResult<ProductDTO>> Get(Guid productId)
+        => (await service.GetAsync(productId)) is { } dto ? dto : NotFound();
 
-    public record CreateProductReq(string Name, string? Type, string Status = "Active");
+    public record CreateProductReq(
+        string Name,
+        string? Description,
+        string? Type,
+        string Status = "Active",
+        string? Images = null
+    );
 
-    [HttpPost]
+    [HttpPost("newProduct")]
     public async Task<ActionResult<ProductDTO>> Create(CreateProductReq req)
     {
-        var dto = await service.CreateAsync(req.Name, req.Type, req.Status);
-        return CreatedAtAction(nameof(Get), new { id = dto.Id }, dto);
+        var dto = await service.CreateAsync(req.Name, req.Description, req.Type, req.Status, req.Images);
+        return CreatedAtAction(nameof(Get), new { productId = dto.ProductID }, dto);
     }
 
-    [HttpPut("{id:guid}/name")]
-    public async Task<IActionResult> Rename(Guid id, [FromBody] string name)
-    { await service.UpdateNameAsync(id, name); return NoContent(); }
+    // GET api/products/search?name=abc
+    [HttpGet("searchName")]
+    public Task<List<ProductDTO>> Search([FromQuery] string name)
+        => service.GetByNameAsync(name);
 
-    [HttpDelete("{id:guid}")]
-    public Task Delete(Guid id) => service.DeleteAsync(id);
+    [HttpPut("changeNameById")]
+    public async Task<IActionResult> Rename(Guid productId, [FromBody] string name)
+    { 
+        await service.UpdateNameAsync(productId, name); 
+        return NoContent(); 
+    }
+
+    [HttpDelete("deleteById")]
+    public Task Delete(Guid productId) => service.DeleteAsync(productId);
 }

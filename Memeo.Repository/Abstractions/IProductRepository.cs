@@ -10,9 +10,10 @@ namespace Memeo.Repository.Abstractions
     public interface IProductRepository
     {
         Task<List<Product>> GetAllAsync(CancellationToken ct = default);
-        Task<Product?> GetAsync(Guid id, CancellationToken ct = default);
-        Task<Product> AddAsync(Product entity, CancellationToken ct = default);
-        Task UpdateAsync(Product entity, CancellationToken ct = default);
-        Task DeleteAsync(Guid id, CancellationToken ct = default);
+        Task<Product?> GetAsync(Guid productId, CancellationToken ct = default);
+        Task<List<Product>> GetByNameAsync(string name, CancellationToken ct = default);
+        Task<Product> AddAsync(Product e, CancellationToken ct = default);
+        Task UpdateAsync(Product e, CancellationToken ct = default);
+        Task DeleteAsync(Guid productId, CancellationToken ct = default);
     }
 }

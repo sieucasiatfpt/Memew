@@ -15,31 +15,65 @@ namespace Memeo.Service.Services
         {
             var list = await repo.GetAllAsync();
             return list.Select(p => new ProductDTO(
-                p.Id, p.Name, p.Type, p.Status,
-                p.Sizes.Any() ? p.Sizes.Min(s => s.UnitPrice) : null
+                p.ProductID, 
+                p.Name, 
+                p.Description,
+                p.Type, 
+                p.Status,
+                p.Images,
+                p.ProductSizes.Any() ? p.ProductSizes.Min(s => s.UnitPrice) : null
             )).ToList();
         }
 
-        public async Task<ProductDTO?> GetAsync(Guid id)
+        public async Task<List<ProductDTO>> GetByNameAsync(string name)
         {
-            var p = await repo.GetAsync(id);
+            var list = await repo.GetByNameAsync(name);
+            return list.Select(p => new ProductDTO(
+                p.ProductID,
+                p.Name,
+                p.Description,
+                p.Type,
+                p.Status,
+                p.Images,
+                p.ProductSizes.Any() ? p.ProductSizes.Min(s => s.UnitPrice) : null
+            )).ToList();
+        }
+
+        public async Task<ProductDTO?> GetAsync(Guid productId)
+        {
+            var p = await repo.GetAsync(productId);
             return p is null ? null
-                : new ProductDTO(p.Id, p.Name, p.Type, p.Status,
-                    p.Sizes.Any() ? p.Sizes.Min(s => s.UnitPrice) : null);
+                : new ProductDTO(
+                    p.ProductID, 
+                    p.Name, 
+                    p.Description,
+                    p.Type, 
+                    p.Status,
+                    p.Images,
+                    p.ProductSizes.Any() ? p.ProductSizes.Min(s => s.UnitPrice) : null);
         }
 
-        public async Task<ProductDTO> CreateAsync(string name, string? type, string status)
+        public async Task<ProductDTO> CreateAsync(string name, string? description, string? type, string status, string? images)
         {
-            var e = await repo.AddAsync(new Product { Name = name, Type = type, Status = status });
-            return new ProductDTO(e.Id, e.Name, e.Type, e.Status, null);
+            var product = new Product { Name = name, Description = description, Type = type, Status = status, Images = images };
+            var e = await repo.AddAsync(product);
+            return new ProductDTO(
+                e.ProductID,
+                e.Name,
+                e.Description,
+                e.Type,
+                e.Status,
+                e.Images,
+                e.ProductSizes.Any() ? e.ProductSizes.Min(s => s.UnitPrice) : null);
         }
 
-        public async Task UpdateNameAsync(Guid id, string name)
+        public async Task UpdateNameAsync(Guid productId, string name)
         {
-            var p = await repo.GetAsync(id) ?? throw new KeyNotFoundException("Product not found");
-            p.Name = name; await repo.UpdateAsync(p);
+            var p = await repo.GetAsync(productId) ?? throw new KeyNotFoundException("Product not found");
+            p.Name = name; 
+            await repo.UpdateAsync(p);
         }
 
-        public Task DeleteAsync(Guid id) => repo.DeleteAsync(id);
+        public Task DeleteAsync(Guid productId) => repo.DeleteAsync(productId);
     }
 }

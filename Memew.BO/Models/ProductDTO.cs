@@ -6,5 +6,13 @@ using System.Threading.Tasks;
 
 namespace Memew.BO.Models
 {
-        public record ProductDTO(Guid Id, string Name, string? Type, string Status, decimal? MinPrice);
+    public record ProductDTO(
+        Guid ProductID,
+        string Name,
+        string? Description,
+        string? Type,
+        string Status,
+        string? Images,
+        decimal? MinPrice
+    );
 }

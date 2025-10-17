@@ -9,9 +9,10 @@ using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// EF Core: đọc chuỗi kết nối & dùng SQL Server
+// EF Core: read connection string & use SQL Server
 builder.Services.AddDbContext<MemewDbContext>(options =>
 {
+    // Match key in appsettings.json -> ConnectionStrings:DefaultConnection
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 // Add services to the container.

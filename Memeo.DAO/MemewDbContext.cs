@@ -17,20 +17,28 @@ namespace Memeo.DAO
 
         protected override void OnModelCreating(ModelBuilder b)
         {
+            // Configure Product entity
+            b.Entity<Product>()
+                .HasKey(p => p.ProductID);
+
+            b.Entity<Product>()
+                .Property(p => p.Images)
+                .HasMaxLength(4000);
+
+            // Configure ProductSize entity
+            b.Entity<ProductSize>()
+                .HasKey(ps => ps.ProductSizesID);
+
+            b.Entity<ProductSize>()
+                .Property(ps => ps.UnitPrice)
+                .HasColumnType("decimal(18,2)");
+
             // 1-n: Product - ProductSize
             b.Entity<ProductSize>()
                 .HasOne(ps => ps.Product)
-                .WithMany(p => p.Sizes)
-                .HasForeignKey(ps => ps.ProductId);
-
-            // Kiểu tiền tệ
-            b.Entity<ProductSize>().Property(x => x.UnitPrice).HasColumnType("decimal(18,2)");
-
-            // Cột text dài cho Images
-            b.Entity<Product>().Property(x => x.Images).HasMaxLength(4000);
-
-            // (Tuỳ chọn) Seed data mẫu
-            // b.Entity<Product>().HasData(new Product { Id = ..., Name = "Cat Meme Tee" });
+                .WithMany(p => p.ProductSizes)
+                .HasForeignKey(ps => ps.ProductID)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
